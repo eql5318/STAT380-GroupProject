@@ -13,3 +13,19 @@ knitr::opts_chunk$set(echo = TRUE)
 
 CODMAPS <- read.csv("CODMaps.csv")
 ```
+
+## Task 1
+
+```{r}
+
+# Step 1: Combine p1 and p2
+
+CODGames_P1andP2 <- full_join(CODGames_p1_380, CODGames_p2_380)
+
+# Step 2: Select only columns relevant to task 1 research question
+
+CODGames_P1andP2 <- CODGames_P1andP2 %>%
+  select(Map1, Map2, MapVote)
+
+
+```

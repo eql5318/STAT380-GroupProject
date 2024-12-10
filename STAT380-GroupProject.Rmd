@@ -11,7 +11,13 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r}
 
+library(tidyverse)
+library(ggplot2)
+
 CODMAPS <- read.csv("CODMaps.csv")
+CODGameModes <- read.csv("CODGameModes.csv")
+CODGames_p1_380 <- read.csv("CODGames_p1_380.csv")
+CODGames_p2_380 <- read.csv("CODGames_p2_380.csv")
 ```
 
 ## Task 1

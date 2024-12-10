@@ -60,9 +60,12 @@ CODGames_P1andP2 <- CODGames_P1andP2 %>%
 # Mutate Method?
 
 CODGames_P1andP2 <- CODGames_P1andP2 %>%
-  mutate(Map1 = ifelse(Map1 %in% CODMAPS$Name, Map1, CODMAPS[which.min(stringdist(target_string, dataset, method = "jw"))])) %>%
-  mutate(Map2 = ifelse(Map2 %in% CODMAPS$Name, Map2, CODMAPS[which.min(stringdist(target_string, dataset, method = "jw"))])) %>%
-  mutate(Choice = ifelse(Choice %in% CODMAPS$Name, Choice, CODMAPS[which.min(stringdist(target_string, dataset, method = "jw"))])) %>%
+  na.omit()
+
+CODGames_P1andP2 <- CODGames_P1andP2 %>%
+  mutate(Map1 = ifelse(Map1 %in% CODMAPS$Name, Map1, CODMAPS[which.min(stringdist(Map1, CODMAPS, method = "jw"))])) %>%
+  mutate(Map2 = ifelse(Map2 %in% CODMAPS$Name, Map2, CODMAPS[which.min(stringdist(Map2, CODMAPS, method = "jw"))])) %>%
+  mutate(Choice = ifelse(Choice %in% CODMAPS$Name, Choice, CODMAPS[which.min(stringdist(Choice, CODMAPS, method = "jw"))]))
 
 
 ```

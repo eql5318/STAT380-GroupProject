@@ -33,5 +33,26 @@ CODGames_P1andP2 <- full_join(CODGames_p1_380, CODGames_p2_380)
 CODGames_P1andP2 <- CODGames_P1andP2 %>%
   select(Map1, Map2, Choice, MapVote)
 
+# Step 3: Remove Cases where values are missing
+
+CODGames_P1andP2 <- CODGames_P1andP2 %>%
+  filter(Map1 != "")
+
+# Step 4: Convert MapVote into two separate Numeric Columns
+
+CODGames_P1andP2 <- CODGames_P1andP2 %>%
+  separate(MapVote, into = c("left", "right"), sep = " to ") %>%
+  mutate(
+    result_left = as.numeric(left),
+    result_right = as.numeric(right)
+  )
+
+CODGames_P1andP2$left <- NULL
+CODGames_P1andP2$right <- NULL
+
+# Step 5: Check if there was a tie or not in the vote
+
+CODGames_P1andP2 <- CODGames_P1andP2 %>%
+  mutate("tie" = ifelse(result_left == result_right, "Yes", "No"))
 
 ```

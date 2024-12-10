@@ -55,4 +55,14 @@ CODGames_P1andP2$right <- NULL
 CODGames_P1andP2 <- CODGames_P1andP2 %>%
   mutate("tie" = ifelse(result_left == result_right, "Yes", "No"))
 
+# Step 6: Correct the names of the maps to account for misspellings/trailing blanks
+
+# Mutate Method?
+
+CODGames_P1andP2 <- CODGames_P1andP2 %>%
+  mutate(Map1 = ifelse(Map1 %in% CODMAPS$Name, Map1, CODMAPS[which.min(stringdist(target_string, dataset, method = "jw"))])) %>%
+  mutate(Map2 = ifelse(Map2 %in% CODMAPS$Name, Map2, CODMAPS[which.min(stringdist(target_string, dataset, method = "jw"))])) %>%
+  mutate(Choice = ifelse(Choice %in% CODMAPS$Name, Choice, CODMAPS[which.min(stringdist(target_string, dataset, method = "jw"))])) %>%
+
+
 ```

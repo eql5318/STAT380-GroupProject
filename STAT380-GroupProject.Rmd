@@ -83,7 +83,49 @@ CODGames_P1andP2 <- CODGames_P1andP2 %>%
                             Choice == "Nuketown '84 Halloween" ~ "Nuketown '84",
                             TRUE ~ Choice))
 
-# Step 7: Create Bar Chart Showing Map1 Winning By Tie vs Not, or Map2
+## STEP 7 - DATA ANALYSIS: Finding out how many times each Map was a candidate
+
+Map1_CandidateFrequency <- CODGames_P1andP2 %>%
+  group_by(Map1) %>%
+  summarize(count1 = n())
+
+Map2_CandidateFrequency <- CODGames_P1andP2 %>%
+  group_by(Map2) %>%
+  summarize(count2 = n())
+
+Full_MapCandidateFrequency <- left_join(Map1_CandidateFrequency, Map2_CandidateFrequency, by = c("Map1" = "Map2")) %>%
+  mutate(TotalCandidateFrequency = count1 + count2)
+
+Full_MapCandidateFrequency$count1 <- NULL
+
+Full_MapCandidateFrequency$count2 <- NULL
+
+# Full_MapCandidateFrequency
+
+# Finding out how many times each map won outright (no ties)
+
+Map_Winning_frequency <- CODGames_P1andP2 %>%
+  filter(tie == "No") %>%
+  group_by(Choice) %>%
+  summarize(count = n())
+
+# Map_Winning_frequency
+
+# Joining Full_MapCandidateFrequency with Map_Winning_frequency
+
+Full_MapFrequency <- left_join(Full_MapCandidateFrequency, Map_Winning_frequency, by = c("Map1" = "Choice"))
+
+Map_WinningPercentages <- Full_MapFrequency %>%
+  mutate(winning_pct = count/TotalCandidateFrequency)
+
+Map_WinningPercentages$count <- NULL
+Map_WinningPercentages$TotalCandidateFrequency <- NULL
+
+Map_WinningPercentages
+
+
+
+# Step 8: Create Bar Chart Showing Map1 Winning By Tie vs Not, or Map2
 
 # Create New column showing which map won the vote, and if they won by tie
 

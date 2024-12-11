@@ -59,17 +59,29 @@ CODGames_P1andP2 <- CODGames_P1andP2 %>%
 # Step 6: Correct the names of the maps to account for misspellings/trailing blanks using as_tibble, mutate, and amatch
 
 CODGames_P1andP2 <- CODGames_P1andP2 %>%
-  na.omit()
-
-CODGames_P1andP2 <- CODGames_P1andP2 %>%
-  as_tibble() %>%
-  mutate(temp1 = amatch(Map1, CODMAPS$Name, maxDist = 2)) %>%
-  mutate(temp2 = amatch(Map2, CODMAPS$Name, maxDist = 2)) %>%
-  mutate(tempc = amatch(Choice, CODMAPS$Name, maxDist = 2)) %>%
-  mutate(Map1 = ifelse(!is.na(temp1), CODMAPS$Name[temp1], Map1)) %>%
-  mutate(Map2 = ifelse(!is.na(temp2), CODMAPS$Name[temp2], Map2)) %>%
-  mutate(Choice = ifelse(!is.na(tempc), CODMAPS$Name[tempc], Choice)) %>%
-  select(-temp1,-temp2,-tempc)
+  mutate(Map1 = case_when(Map1 %in% c("Collateral", "Collateral Striek", "Collaterol Strike") ~ "Collateral Strike",
+                          Map1 == "Deprogam" ~ "Deprogram",
+                          Map1 == "Drive-in" ~ "Drive-In",
+                          Map1 == "Jungle " ~ "Jungle",
+                          Map1 == "Miami " ~ "Miami",
+                          Map1 == "Miami Stirke" ~ "Miami Strike",
+                          Map1 %in% c("Raid ", "Riad") ~ "Raid",
+                          Map1 %in% c("Ruah", "Rush ") ~ "Rush",
+                          Map1 == "Zoo " ~ "Zoo",
+                          TRUE ~ Map1)) %>%
+  mutate(Map2 = case_when(Map2 == "Amrada Strike" ~ "Armada Strike",
+                          Map2 == "Collateral" ~ "Collateral Strike",
+                          Map2 == "Drive-in" ~ "Drive-In",
+                          Map2 %in% c("Miami Sstrike", "Miami Stirke") ~ "Miami Strike",
+                          Map2 == "Nuketown '84 Halloween" ~ "Nuketown '84",
+                          Map2 == "yamantau" ~ "Yamantau",
+                          TRUE ~ Map2)) %>%
+  mutate(Choice = case_when(Choice %in% c("APocalypse", "Apocolypse") ~ "Apocalypse",
+                            Choice %in% c("Collateral", "Collaterel Strike") ~ "Collateral Strike",
+                            Choice == "Deisel" ~ "Diesel",
+                            Choice == "Drive-in" ~ "Drive-In",
+                            Choice == "Nuketown '84 Halloween" ~ "Nuketown '84",
+                            TRUE ~ Choice))
 
 # Step 7: Create Bar Chart Showing Map1 Winning By Tie vs Not, or Map2
 

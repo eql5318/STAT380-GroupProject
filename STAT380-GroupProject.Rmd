@@ -70,4 +70,23 @@ CODGames_P1andP2 <- CODGames_P1andP2 %>%
   mutate(Map2 = ifelse(!is.na(temp2), CODMAPS$Name[temp2], Map2)) %>%
   mutate(Choice = ifelse(!is.na(tempc), CODMAPS$Name[tempc], Choice)) %>%
   select(-temp1,-temp2,-tempc)
+
+# Step 7: Create Bar Chart Showing Map1 Winning By Tie vs Not, or Map2
+
+# Create New column showing which map won the vote, and if they won by tie
+
+CODGames_P1andP2 <- CODGames_P1andP2 %>%
+  mutate(
+    MapWins = case_when(
+      Map1 == Choice & tie == "No" ~ "Map1 without Tie",
+      Map1 == Choice & tie == "Yes" ~ "Map1 with Tie",
+      Map2 == Choice ~ "Map2"
+    )
+  )
+
+# Create Simple Bar Plot for COD Map Choice
+counts <- table(CODGames_P1andP2$MapWins)
+barplot(counts, main="COD Map Choice",
+   xlab="Map Choice", col=rgb(0.8,0.1,0.1,0.6))
+
 ```

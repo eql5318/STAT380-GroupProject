@@ -1,6 +1,6 @@
 ---
 title: "Group Project"
-author: "Ed Lawrence"
+authors: "Ed Lawrence, Bobby Dodge, Henry Harrison"
 date: "2024-12-10"
 output: html_document
 ---
@@ -13,6 +13,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 library(tidyverse)
 library(ggplot2)
+library(stringdist)
 
 CODMAPS <- read.csv("CODMaps.csv")
 CODGameModes <- read.csv("CODGameModes.csv")
@@ -55,17 +56,18 @@ CODGames_P1andP2$right <- NULL
 CODGames_P1andP2 <- CODGames_P1andP2 %>%
   mutate("tie" = ifelse(result_left == result_right, "Yes", "No"))
 
-# Step 6: Correct the names of the maps to account for misspellings/trailing blanks
-
-# Mutate Method?
+# Step 6: Correct the names of the maps to account for misspellings/trailing blanks using as_tibble, mutate, and amatch
 
 CODGames_P1andP2 <- CODGames_P1andP2 %>%
   na.omit()
 
 CODGames_P1andP2 <- CODGames_P1andP2 %>%
-  mutate(Map1 = ifelse(Map1 %in% CODMAPS$Name, Map1, CODMAPS[which.min(stringdist(Map1, CODMAPS, method = "jw"))])) %>%
-  mutate(Map2 = ifelse(Map2 %in% CODMAPS$Name, Map2, CODMAPS[which.min(stringdist(Map2, CODMAPS, method = "jw"))])) %>%
-  mutate(Choice = ifelse(Choice %in% CODMAPS$Name, Choice, CODMAPS[which.min(stringdist(Choice, CODMAPS, method = "jw"))]))
-
-
+  as_tibble() %>%
+  mutate(temp1 = amatch(Map1, CODMAPS$Name, maxDist = 2)) %>%
+  mutate(temp2 = amatch(Map2, CODMAPS$Name, maxDist = 2)) %>%
+  mutate(tempc = amatch(Choice, CODMAPS$Name, maxDist = 2)) %>%
+  mutate(Map1 = ifelse(!is.na(temp1), CODMAPS$Name[temp1], Map1)) %>%
+  mutate(Map2 = ifelse(!is.na(temp2), CODMAPS$Name[temp2], Map2)) %>%
+  mutate(Choice = ifelse(!is.na(tempc), CODMAPS$Name[tempc], Choice)) %>%
+  select(-temp1,-temp2,-tempc)
 ```

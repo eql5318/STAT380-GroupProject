@@ -13,6 +13,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 library(tidyverse)
 library(ggplot2)
+library(randomForest)
 
 CODMAPS <- read.csv("CODMaps.csv")
 CODGameModes <- read.csv("CODGameModes.csv")
@@ -222,18 +223,17 @@ ggplot(map_probabilities, aes(x = reorder(map, -win_probability), y = win_probab
 
 ```
 
+## Task 3
+```{r}
 
+```
 
+## Task 4
 
+Research Question: What factors best contribute to the player winning a match?
 
+Methods used: Random Forest, Bagging
 
+```{r}
 
-
-
-
-
-
-
-
-
-
+```

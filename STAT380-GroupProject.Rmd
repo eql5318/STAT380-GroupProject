@@ -149,7 +149,76 @@ barplot(counts, main="COD Map Choice",
 
 ```{r}
 
+library(dplyr)
+library(ggplot2)
 
+# Step 1: Load the datasets
+p1_data <- CODGames_p1_380
+p2_data <- CODGames_p2_380
+
+# Step 2: Inspect data structure and summary
+str(p1_data)
+str(p2_data)
+
+# Step 3: Data cleaning
+# Remove rows with missing values in critical columns
+p1_cleaned <- p1_data %>% filter(!is.na(Map1), !is.na(Map2), !is.na(MapVote))
+p2_cleaned <- p2_data %>% filter(!is.na(Map1), !is.na(Map2), !is.na(MapVote))
+
+# Standardize map names by trimming whitespaces and converting to lowercase
+p1_cleaned <- p1_cleaned %>%
+  mutate(
+    Map1 = tolower(trimws(Map1)),
+    Map2 = tolower(trimws(Map2)),
+    Choice = tolower(trimws(Choice))
+  )
+
+p2_cleaned <- p2_cleaned %>%
+  mutate(
+    Map1 = tolower(trimws(Map1)),
+    Map2 = tolower(trimws(Map2)),
+    Choice = tolower(trimws(Choice))
+  )
+
+# Step 4: Combine datasets
+combined_data <- bind_rows(p1_cleaned, p2_cleaned)
+
+
+# Step 5: Calculate win probabilities with tie handling
+
+# Identify outright wins (exclude ties where Map1 was chosen by default)
+outright_wins <- combined_data %>%
+  filter(MapVote != "tie" | Choice != Map1) %>%
+  group_by(Choice) %>%
+  summarise(wins = n()) %>%
+  rename(map = Choice)
+
+# Count total appearances for each map (regardless of ties)
+appearances <- combined_data %>%
+  pivot_longer(cols = c(Map1, Map2), names_to = "position", values_to = "map") %>%
+  group_by(map) %>%
+  summarise(appearances = n())
+
+# Merge wins and appearances to calculate probabilities
+map_probabilities <- appearances %>%
+  left_join(outright_wins, by = "map") %>%
+  mutate(
+    wins = ifelse(is.na(wins), 0, wins),  # Handle maps with no outright wins
+    win_probability = wins / appearances
+  )
+
+# Step 6: Visualization (unchanged)
+map_probabilities <- map_probabilities %>%
+  arrange(desc(win_probability))
+
+ggplot(map_probabilities, aes(x = reorder(map, -win_probability), y = win_probability)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  labs(
+    title = "Win Probability of Each Map (Excluding Default Wins)",
+    x = "Map Name",
+    y = "Win Probability"
+  ) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 ```
 

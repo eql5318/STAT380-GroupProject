@@ -292,6 +292,10 @@ ggplot(CODGames_P1andP2, aes(x = Score, y = TotalXP)) +
        y = "TotalXP") +
   theme_minimal()
 
+# Modeling TotalXP Based on Score and GameType
+
+
+
 ```
 
 ## Task 4

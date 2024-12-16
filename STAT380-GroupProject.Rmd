@@ -280,6 +280,17 @@ ggplot(CODGames_P1andP2, aes(x = GameType)) +
        y = "Count") +
   theme_minimal()
 
+# Visualizing Relationship between TotalXP, Score, GameType
+
+# For this we will do charts with two lines, Score and TotalXP, facet wrapped by GameType
+
+ggplot(CODGames_P1andP2, aes(x = Score, y = TotalXP)) +
+  geom_smooth(color = "blue", method = "loess", se = FALSE) +
+  facet_wrap(~ GameType, scales = "free") +
+  labs(title = "Relationship between TotalXP, Score and GameType",
+       x = "Score",
+       y = "TotalXP") +
+  theme_minimal()
 
 ```
 

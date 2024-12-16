@@ -236,7 +236,50 @@ CODGames_P1andP2 <- CODGames_P1andP2 %>%
                           GameType == "HC - Kill Confirmed" ~ "Kill Confirmed",
                           TRUE ~ GameType))
 
-# Step 2: Performing EDA
+# Step 2: EDA
+
+# Analyzing Distributions of GameType, Score, and TotalXP
+
+
+# TotalXP EDA
+
+print("TotalXP Summary Statistics")
+summary(CODGames_P1andP2$TotalXP)
+
+# DensityPlot for TotalXP
+
+options(scipen = 999)
+
+ggplot(CODGames_P1andP2, aes(x = TotalXP)) +
+  geom_density(fill = "blue", alpha = 0.4) +
+  labs(title = "Density Plot of TotalXP",
+       x = "TotalXP",
+       y = "Density") +
+  theme_minimal()
+
+# Score EDA
+
+print("Score Summary Statistics")
+summary(CODGames_P1andP2$Score)
+
+# DensityPlot for Score
+
+ggplot(CODGames_P1andP2, aes(x = Score)) +
+  geom_density(fill = "blue", alpha = 0.4) +
+  labs(title = "Density Plot of Score",
+       x = "Score",
+       y = "Density") +
+  theme_minimal()
+
+# Bar Chart for GameType
+
+ggplot(CODGames_P1andP2, aes(x = GameType)) +
+  geom_bar(fill = "skyblue", color = "black") +
+  labs(title = "Frequency of GameType",
+       x = "GameType",
+       y = "Count") +
+  theme_minimal()
+
 
 ```
 

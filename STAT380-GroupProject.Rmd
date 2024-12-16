@@ -234,6 +234,8 @@ CODGames_P1andP2 <- full_join(CODGames_p1_380, CODGames_p2_380)
 
 #### Step 2: Cleaning GameType column
 
+In this step, we resolve some discrepancies with how game type names are written. Certain games are prefaced with "HC - ." These code removes this prefix to consolidate game types into four categories.
+
 ```{r}
 
 CODGames_P1andP2 <- CODGames_P1andP2 %>%
@@ -251,7 +253,7 @@ CODGames_P1andP2 <- CODGames_P1andP2 %>%
 
 ```{r}
 
-# TotalXP EDA
+# TotalXP Summary Statistics
 
 print("TotalXP Summary Statistics")
 summary(CODGames_P1andP2$TotalXP)
@@ -269,12 +271,15 @@ ggplot(CODGames_P1andP2, aes(x = TotalXP)) +
 
 ```
 
+In this density plot, we see that TotalXP is skewed slightly right. We also observe from the summary statistics that the median and average TotalXP are both right around 15,000, with a range for TotalXP of over 40,000.
 
 #### Step 4:
 
 ##### 3.2: Score
 
 ```{r}
+
+# Score Summary Statistics
 
 print("Score Summary Statistics")
 summary(CODGames_P1andP2$Score)

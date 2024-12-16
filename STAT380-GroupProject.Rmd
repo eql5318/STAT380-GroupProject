@@ -18,6 +18,7 @@ library(dplyr)
 library(rpart)
 library(rattle)
 library(e1071)
+library(caret)
 
 CODMAPS <- read.csv("CODMaps.csv")
 CODGameModes <- read.csv("CODGameModes.csv")
@@ -555,9 +556,23 @@ svm_model <- svm(Win ~ ., data = Train, kernel = "radial")
 ```{r}
 svm_pred <- predict(svm_model, newdata = Validation)
 ```
+## Step 5: Get the most import factor for "Win"
+```{r}
+#Part a: Fit SVM model with RFE
+control <- rfeControl(functions=rfFuncs, method="cv", number=10)
+rfe_result <- rfe(Train %>% select(-Win), Train$Win, sizes=1:ncol(Train)-1, rfeControl=control)
 
-### Step 5: Evaluate Accuracy
+#Part b: Get the important features
+important_features <- predictors(rfe_result)
+important_features
+```
+
+### Step 6: Evaluate Accuracy
 ```{r}
 accuracy_svm <- mean(svm_pred == Validation$Win)
 accuracy_svm
 ```
+
+Analysis:
+
+Both of the methods being used shows that "Deaths" was the most important factor for "Win". From the accuracy predictions of each model, we can see that SVM allows for a higher accuracy compared to the random forest model.

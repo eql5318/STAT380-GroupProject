@@ -137,6 +137,8 @@ Map_Winning_frequency
 
 ```{r}
 
+# Step 9
+
 Full_MapFrequency <- left_join(Full_MapCandidateFrequency, Map_Winning_frequency, by = c("Map1" = "Choice"))
 
 Map_WinningPercentages <- Full_MapFrequency %>%

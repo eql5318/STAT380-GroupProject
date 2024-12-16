@@ -93,6 +93,8 @@ CODGames_P1andP2 <- CODGames_P1andP2 %>%
 
 ```{r}
 
+# Step 7: Finding Candidate Frequency for Map1 & Map2, then congregating that information together using left_join
+
 Map1_CandidateFrequency <- CODGames_P1andP2 %>%
   group_by(Map1) %>%
   summarize(count1 = n())
@@ -115,6 +117,8 @@ Full_MapCandidateFrequency
 #### Finding out how many times each map won outright (no ties)
 
 ```{r}
+
+# Step 8
 
 Map_Winning_frequency <- CODGames_P1andP2 %>%
   filter(tie == "No") %>%

@@ -235,8 +235,11 @@ CODGames_P1andP2 <- CODGames_P1andP2 %>%
                           GameType == "HC - Domination" ~ "Domination",
                           GameType == "HC - Kill Confirmed" ~ "Kill Confirmed",
                           TRUE ~ GameType))
+```
 
 # Step 2: EDA
+
+```{r}
 
 # Analyzing Distributions of GameType, Score, and TotalXP
 
@@ -291,10 +294,16 @@ ggplot(CODGames_P1andP2, aes(x = Score, y = TotalXP)) +
        x = "Score",
        y = "TotalXP") +
   theme_minimal()
+```
 
 # Modeling TotalXP Based on Score and GameType
 
+```{r}
+# Modeling TotalXP Based on Score and GameType
 
+model <- lm(TotalXP ~ Score + GameType, data = CODGames_P1andP2)
+
+summary(model)
 
 ```
 

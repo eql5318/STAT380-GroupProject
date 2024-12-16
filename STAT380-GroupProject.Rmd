@@ -151,7 +151,7 @@ Map_WinningPercentages
 
 ```{r}
 
-ggplot(Map_WinningPercentages, aes(x = reorder(Map1, -winning_pct), y = winning_pct)) +
+ggplot(Map_WinningPercentages, aes(x = Map1, y = winning_pct)) +
   geom_bar(stat = "identity", fill = "skyblue", color = "black") +
   labs(title = "Winning Percentage by Map",
        x = "Map",

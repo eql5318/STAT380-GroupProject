@@ -295,6 +295,8 @@ ggplot(CODGames_P1andP2, aes(x = Score)) +
 
 ```
 
+In this density plot, we see that the distribution of Score is also skewed slightly right. Additionally, we observe from the summary statistics that the median and average Score are both right around 2,900, with a range for Score of about 9,600. These statistics are noticeably less than what was observed for TotalXP.
+
 ##### 3.3: GameType
 
 ```{r}
@@ -309,6 +311,8 @@ ggplot(CODGames_P1andP2, aes(x = GameType)) +
   theme_minimal()
 
 ```
+
+In this visualization, we observe that TDM and Hardpoint are the predominant GameTypes among the Player 1 and 2 data available. Between these two types, TDM outnumbers Hardpoint 2:1 in frequency.
 
 ##### 3.4 Visualizing Relationship between TotalXP, Score, GameType
 

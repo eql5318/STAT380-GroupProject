@@ -145,7 +145,25 @@ Map_WinningPercentages
 
 ```
 
-Task 1 - Data Visualization
+### Task 1 - Data Visualization
+
+#### Visualizing winning percentage by Map
+
+```{r}
+
+ggplot(Map_WinningPercentages, aes(x = reorder(Map1, -winning_pct), y = winning_pct)) +
+  geom_bar(stat = "identity", fill = "skyblue", color = "black") +
+  labs(title = "Winning Percentage by Map",
+       x = "Map",
+       y = "Winning Percentage") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+```
+
+From this vizualization, we observe that Maps like Raid, Crossroads Strike, and Nuketown '84 have the highest vote winning rates when offered as a choice, whereas maps like Echelon, WMD, and Miami are among the lowest.
+
+#### Visualizing rate of victory by option (Map1, Map2, or Map1 by tie-default)
 
 ```{r}
 

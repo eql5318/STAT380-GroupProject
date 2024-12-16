@@ -340,6 +340,8 @@ summary(model)
 
 ```
 
+Upon accounting for Score, this model was tasked with answering a research question to determine how TotalXP is affected by GameType. Based off our EDA, as well as the low P-value associated with score, it is clear that Score is a strong indicator of TotalXP, which explains why accounting for this variable was prudent. However, once Score was accounted for, we observe a relatively low R-squared value (~.34) for the relationship between GameType and TotalXP. This model performance result suggests that while Score was a strong indicator of TotalXP, GameType is a relatively poor indicator. Thus, to answer the research question, after accounting for Score, GameType does not considerably affect TotalXP.
+
 ## Task 4
 
 Research Question: What factors best contribute to the player winning a match?

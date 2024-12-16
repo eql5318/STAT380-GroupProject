@@ -469,3 +469,93 @@ fullTree <- rpart(Win ~ .,
 #Part b: Display the cptable
 fullTree$cptable
 ```
+
+### Step 3 - Plot the tree
+```{r}
+fancyRpartPlot(fullTree, cex = 0.5)
+```
+
+### Step 4: Visualize the results of the cross validation procedure. 
+```{r}
+plotcp(fullTree)
+```
+
+### Step 5: What is the optimal value of the complexity parameter based on minimizing the cross validation error? 
+```{r}
+#Part a: Determine the row of cptable containing smallest CV error
+cpRow <- which.min(fullTree$cptable[ , "xerror"])
+
+#Part b: Determine optimal value of cp 
+cpChoiceMin <- fullTree$cptable[ , "CP"][cpRow]
+
+#Part c: Display the choice
+cpChoiceMin
+```
+
+### Step 6: Find the optimal value of the complexity parameter based on the 1se rule
+```{r}
+#Part a: Determine the row of cptable containing smallest CV error
+cpRow <- which.min(fullTree$cptable[ , "xerror"])
+
+# Part b: Calculate min(xerror) + xstd
+target <- fullTree$cptable[ , "xerror"][cpRow] +fullTree$cptable[ , "xstd"][cpRow]
+
+#Part c: Determine which xerror values are less than target and select first such value
+cpRow1se <- which(fullTree$cptable[ , "xerror"] < target)[1]
+
+cpChoice1se <- fullTree$cptable[ , "CP"][cpRow1se]
+
+#Part d: Display the choice
+cpChoice1se
+```
+
+### Step 7: Prune the Tree
+```{r}
+#Part a: Prune the true
+prunedTree <- prune(fullTree, cp=cpChoice1se)
+
+#Part b: View the pruned tree
+fancyRpartPlot(prunedTree, cex=0.65)
+```
+
+### Step 8: Find the validation set accuracy from Pruned Tree
+```{r}
+#Part a: Obtain the predicted classes
+prunedPred <- predict(prunedTree, newdata = Validation,
+                      type = "class")
+  
+#Part b: Calculate the accuracy
+mean(prunedPred == Validation$Win)
+
+```
+## Support Vector Machines (SVMs) Method:
+
+### Step 1: Convert factors to numeric for SVM
+```{r}
+CODGames_P1andP2$Choice <- as.factor(CODGames_P1andP2$Choice)
+CODGames_P1andP2$PrimaryWeapon <- as.factor(CODGames_P1andP2$PrimaryWeapon)
+```
+
+### Step 2: Split data into train and validation sets
+```{r}
+set.seed(123)
+train_indices <- sample(1:nrow(CODGames_P1andP2), floor(0.85 * nrow(CODGames_P1andP2)))
+Train <- CODGames_P1andP2[train_indices, ]
+Validation <- CODGames_P1andP2[-train_indices, ]
+```
+
+### Step 3: Train SVM Model
+```{r}
+svm_model <- svm(Win ~ ., data = Train, kernel = "radial")
+```
+
+### Step 4: Predict on Validation Set
+```{r}
+svm_pred <- predict(svm_model, newdata = Validation)
+```
+
+### Step 5: Evaluate Accuracy
+```{r}
+accuracy_svm <- mean(svm_pred == Validation$Win)
+accuracy_svm
+```

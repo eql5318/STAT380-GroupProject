@@ -14,6 +14,10 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(ggplot2)
 library(randomForest)
+library(dplyr)
+library(rpart)
+library(rattle)
+library(e1071)
 
 CODMAPS <- read.csv("CODMaps.csv")
 CODGameModes <- read.csv("CODGameModes.csv")
@@ -390,8 +394,78 @@ Upon accounting for Score, this model was tasked with answering a research quest
 
 Research Question: What factors best contribute to the player winning a match?
 
-Methods used: Random Forest, Bagging
+Methods used: Random Forest, Support Vector Machines
+
+## Random Forest Method:
+
+### Step 1: Prepare Data
 
 ```{r}
+# Part a: Combine player 1 and player 2 data
 
+CODGames_P1andP2 <- full_join(CODGames_p1_380, CODGames_p2_380)
+
+# Step 2: Select columns relevant to task 4 research question
+
+CODGames_P1andP2 <- CODGames_P1andP2 %>%
+  select(Choice, Eliminations, Deaths, Score, Damage, PrimaryWeapon, GameType, Result)
+
+# Step 3: Remove Cases where values are missing
+
+CODGames_P1andP2 <- CODGames_P1andP2 %>%
+  filter(Choice != "" & PrimaryWeapon != "")
+
+# Step 4: Fix spellings of map choice names
+
+CODGames_P1andP2 <- CODGames_P1andP2 %>%
+  mutate(Choice = case_when(Choice %in% c("APocalypse", "Apocolypse") ~ "Apocalypse",
+                            Choice %in% c("Collateral", "Collaterel Strike") ~ "Collateral Strike",
+                            Choice == "Deisel" ~ "Diesel",
+                            Choice == "Drive-in" ~ "Drive-In",
+                            Choice == "Nuketown '84 Halloween" ~ "Nuketown '84",
+                            TRUE ~ Choice))
+
+# Step 5: Create a new column for player 1 or 2 winning a match from 
+# split result column into two to make win column
+
+CODGames_P1andP2 <- CODGames_P1andP2 %>%
+  separate(Result, into = c("Result_Player", "Result_Opposing"), sep = "-") %>%
+  mutate(
+    result_player = as.numeric(Result_Player),
+    result_opposing = as.numeric(Result_Opposing)
+  )
+
+CODGames_P1andP2 <- CODGames_P1andP2 %>%
+  mutate("Win" = ifelse(result_player > result_opposing, "Yes", "No"))
+
+# Step 6: Convert Win and Choice to factor
+
+CODGames_P1andP2$Win <- as.factor(CODGames_P1andP2$Win)
+
+CODGames_P1andP2$Choice <- as.factor(CODGames_P1andP2$Choice)
+
+
+# Step 7: Perform Training/Validation Split
+set.seed(123)
+CODGames_P1andP2Ind <- sample(1:nrow(CODGames_P1andP2), floor(0.85*nrow(CODGames_P1andP2)))
+
+CODGames_P1andP2 <- CODGames_P1andP2[, c("Choice", "Eliminations", "Deaths", "Score", "Damage", "PrimaryWeapon", "GameType", "Win")]
+
+#Step 8: Create Train and Validations
+Train <- CODGames_P1andP2[CODGames_P1andP2Ind, ]
+Validation <- CODGames_P1andP2[-CODGames_P1andP2Ind, ]
+```
+
+### Step 2:  Pruning the Tree
+```{r}
+#Part a:  Using a complexity parameter (cp) value of 0.001, grow the tree. 
+set.seed(123)
+fullTree <- rpart(Win ~ ., 
+                  method = "class",
+                  data = Train,
+                  cp = 0.01,
+                  xval = 10)
+
+#Part b: Display the cptable
+fullTree$cptable
 ```

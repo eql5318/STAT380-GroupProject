@@ -188,6 +188,8 @@ barplot(counts, main="COD Map Choice",
 
 ```
 
+Based off this Visualization, it appears that the Map2 choice won outright more frequently than Map1, however when Map1's victories both outright and via ties were tabulated together, that number outperformed Map2 win rate.
+
 ### Task 2
 
 ```{r}

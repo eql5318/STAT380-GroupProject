@@ -225,6 +225,18 @@ ggplot(map_probabilities, aes(x = reorder(map, -win_probability), y = win_probab
 
 ## Task 3
 ```{r}
+CODGames_P1andP2 <- full_join(CODGames_p1_380, CODGames_p2_380)
+
+# Step 1: Cleaning GameType column
+
+CODGames_P1andP2 <- CODGames_P1andP2 %>%
+  mutate(GameType = case_when(GameType == "HC - TDM" ~ "TDM",
+                          GameType == "HC - Hardpoint" ~ "Hardpoint",
+                          GameType == "HC - Domination" ~ "Domination",
+                          GameType == "HC - Kill Confirmed" ~ "Kill Confirmed",
+                          TRUE ~ GameType))
+
+# Step 2: Performing EDA
 
 ```
 

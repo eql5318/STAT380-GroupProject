@@ -316,7 +316,7 @@ In this visualization, we observe that TDM and Hardpoint are the predominant Gam
 
 ##### 3.4 Visualizing Relationship between TotalXP, Score, GameType
 
-For this we will do charts with two lines, Score and TotalXP, facet gridded by GameType
+For this we will do charts with two lines, Score and TotalXP, facet wrapped by GameType.
 
 ```{r}
 ggplot(CODGames_P1andP2, aes(x = Score, y = TotalXP)) +
@@ -327,6 +327,8 @@ ggplot(CODGames_P1andP2, aes(x = Score, y = TotalXP)) +
        y = "TotalXP") +
   theme_minimal()
 ```
+
+In this visualization, we have plotted Score vs TotalXP when grouped by each category of GameType. In each grouping, we see a strong positive relationship between Score and TotalXP. That being said, in the hardpoint, TotalXP appears to go down once Score exceeds 7500. Since hardpoint is one of the 2 main GameTypes, this will be an interesting dynamic to consider going forward.
 
 #### Step 4: Build model for TotalXP based off Score and GameType
 

@@ -181,7 +181,7 @@ ggplot(Map_WinningPercentages, aes(x = Map1, y = winning_pct)) +
 
 ```
 
-From this vizualization, we observe that Maps like Raid, Crossroads Strike, and Nuketown '84 have the highest vote winning rates when offered as a choice, whereas maps like Echelon, WMD, and Miami are among the lowest.
+From this visualization, we observe that Maps like Raid, Crossroads Strike, and Nuketown '84 have the highest vote winning rates when offered as a choice, whereas maps like Echelon, WMD, and Miami are among the lowest. Therefore to answer the research question Raid, Nuketown '84 and Crossroads Strike are the three maps most likely to win the map vote when they are an option?
 
 #### Visualizing rate of victory by option (Map1, Map2, or Map1 by tie-default)
 

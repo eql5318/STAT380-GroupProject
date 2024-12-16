@@ -224,10 +224,17 @@ ggplot(map_probabilities, aes(x = reorder(map, -win_probability), y = win_probab
 ```
 
 ## Task 3
+
+#### Step 1: Combining Player dataframes again so all attributes are available
 ```{r}
+
 CODGames_P1andP2 <- full_join(CODGames_p1_380, CODGames_p2_380)
 
-# Step 1: Cleaning GameType column
+```
+
+#### Step 2: Cleaning GameType column
+
+```{r}
 
 CODGames_P1andP2 <- CODGames_P1andP2 %>%
   mutate(GameType = case_when(GameType == "HC - TDM" ~ "TDM",
@@ -235,14 +242,14 @@ CODGames_P1andP2 <- CODGames_P1andP2 %>%
                           GameType == "HC - Domination" ~ "Domination",
                           GameType == "HC - Kill Confirmed" ~ "Kill Confirmed",
                           TRUE ~ GameType))
+
 ```
 
-# Step 2: EDA
+#### Step 3: EDA, Analyzing Distributions of GameType, Score, and TotalXP
+
+##### 3.1: TotalXP
 
 ```{r}
-
-# Analyzing Distributions of GameType, Score, and TotalXP
-
 
 # TotalXP EDA
 
@@ -260,7 +267,14 @@ ggplot(CODGames_P1andP2, aes(x = TotalXP)) +
        y = "Density") +
   theme_minimal()
 
-# Score EDA
+```
+
+
+#### Step 4:
+
+##### 3.2: Score
+
+```{r}
 
 print("Score Summary Statistics")
 summary(CODGames_P1andP2$Score)
@@ -274,6 +288,12 @@ ggplot(CODGames_P1andP2, aes(x = Score)) +
        y = "Density") +
   theme_minimal()
 
+```
+
+##### 3.3: GameType
+
+```{r}
+
 # Bar Chart for GameType
 
 ggplot(CODGames_P1andP2, aes(x = GameType)) +
@@ -283,10 +303,13 @@ ggplot(CODGames_P1andP2, aes(x = GameType)) +
        y = "Count") +
   theme_minimal()
 
-# Visualizing Relationship between TotalXP, Score, GameType
+```
 
-# For this we will do charts with two lines, Score and TotalXP, facet wrapped by GameType
+##### 3.4 Visualizing Relationship between TotalXP, Score, GameType
 
+For this we will do charts with two lines, Score and TotalXP, facet gridded by GameType
+
+```{r}
 ggplot(CODGames_P1andP2, aes(x = Score, y = TotalXP)) +
   geom_smooth(color = "blue", method = "loess", se = FALSE) +
   facet_wrap(~ GameType, scales = "free") +
@@ -296,10 +319,9 @@ ggplot(CODGames_P1andP2, aes(x = Score, y = TotalXP)) +
   theme_minimal()
 ```
 
-# Modeling TotalXP Based on Score and GameType
+#### Step 4: Build model for TotalXP based off Score and GameType
 
 ```{r}
-# Modeling TotalXP Based on Score and GameType
 
 model <- lm(TotalXP ~ Score + GameType, data = CODGames_P1andP2)
 

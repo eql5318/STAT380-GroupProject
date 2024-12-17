@@ -262,6 +262,8 @@ find_closest_match <- function(input_name, correct_names) {
   return(correct_names[which.min(distances)])
 }
 
+# Step 4: Correct Map Names in the Dataset
+correct_names <- clean_maps$Name_clean
 
 p1 <- p1 %>%
   mutate(Map1 = ifelse(!is.na(Map1) & Map1 != "", sapply(Map1, find_closest_match, correct_names), NA),
@@ -272,9 +274,6 @@ p2 <- p2 %>%
   mutate(Map1 = ifelse(!is.na(Map1) & Map1 != "", sapply(Map1, find_closest_match, correct_names), NA),
          Map2 = ifelse(!is.na(Map2) & Map2 != "", sapply(Map2, find_closest_match, correct_names), NA),
          Choice = ifelse(!is.na(Choice) & Choice != "", sapply(Choice, find_closest_match, correct_names), NA))
-
-# Step 4: Correct Map Names in the Dataset
-correct_names <- clean_maps$Name_clean
 
 p1 <- p1 %>%
   mutate(Map1 = ifelse(!is.na(Map1), sapply(Map1, find_closest_match, correct_names), NA),

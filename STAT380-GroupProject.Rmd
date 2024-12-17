@@ -335,7 +335,7 @@ In our manual approach, we fixed the map name inconsistencies by explicitly spec
 
 Who had the more effective solution: Our group, or the AI?
 
-Upon comparison, our group came to the conclusion that the AI solution was a more complex yet more effective method of answering this research question. This was mainly due to the differences in our answers when it came to resolving edge cases featuring misspellings, leading spaces, or misrepresentations of map names. While our code was effective in resolving the singular issues by manually picking out incorrect cases, the AI result provides solution that can be scaled to larger datasets and solve more complex problems.
+Upon comparison, our group came to the conclusion that the AI solution was a more complex yet more effective method of answering this research question. This was mainly due to the differences in our answers when it came to resolving edge cases featuring misspellings, leading spaces, or misrepresentations of map names. While our code was effective in resolving singular issues by manually picking out incorrect cases, the AI result provides a solution that can be scaled to larger datasets and solve more complex problems.
 
   
 

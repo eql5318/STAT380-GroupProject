@@ -390,8 +390,6 @@ ggplot(CODGames_P1andP2, aes(x = TotalXP)) +
 
 In this density plot, we see that TotalXP is skewed slightly right. We also observe from the summary statistics that the median and average TotalXP are both right around 15,000, with a range for TotalXP of over 40,000.
 
-#### Step 4:
-
 ##### 3.2: Score
 
 ```{r}

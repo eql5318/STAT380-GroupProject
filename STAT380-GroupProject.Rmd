@@ -330,7 +330,7 @@ Prompts Provided:
 
   Prompt 4 was the final prompt
 
-Comparison of AI Solution to Group Solution in Task 1:
+Comparison of AI Solution to Group Solution in Task 1: 
 
   
 

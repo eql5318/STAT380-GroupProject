@@ -410,11 +410,15 @@ Upon accounting for Score, this model was tasked with answering a research quest
 
 Research Question: What factors best contribute to the player winning a match?
 
-Methods used: Random Forest, Support Vector Machines
-
 ## Random Forest Method:
 
+The use of the random forest method will focus on which features will are most important in predicting Win, using the complexity parameter for pruning the tree. They will also provide easy visualizations that help to explain how each of the factors connect to the response variable being studied. The trees can handle complex, nonlinear relationships between the predictors and the outcome. 
+
 ### Step 1: Prepare Data
+
+It is necessary to combine both pieces of player data again, and choose which factors will be tested in finding out which of them in most important to the Win variable. This will be accomplished through joining the two datasets, selecting the columns that are needed, and removing unnecessary data from the combined datasets and fixing spelling errors from in the data.
+
+The "Win" column will be created from splitting the "Result" into two columns which will determine if the player had won the match or not. This column and the "Choice" column will be made into factors so they caan be split into the Test and Validation sets.
 
 ```{r}
 # Part a: Combine player 1 and player 2 data
@@ -471,6 +475,8 @@ CODGames_P1andP2 <- CODGames_P1andP2[, c("Choice", "Eliminations", "Deaths", "Sc
 Train <- CODGames_P1andP2[CODGames_P1andP2Ind, ]
 Validation <- CODGames_P1andP2[-CODGames_P1andP2Ind, ]
 ```
+
+The complexity parameter and cross-validation error will be used to simplify the tree, and the 1-SE Rule will be applied to help in avoiding overfitting, through selecting a simpler tree with a generalizable error.
 
 ### Step 2:  Pruning the Tree
 ```{r}
@@ -542,9 +548,13 @@ prunedPred <- predict(prunedTree, newdata = Validation,
   
 #Part b: Calculate the accuracy
 mean(prunedPred == Validation$Win)
-
 ```
+
+From the results of the tree we can see that the accuracy on the validation as 60.33%, while showing that "Deaths" is the most influential variables for "Win". It illustrates how lower deaths will lead to more wins for the players.
+
 ## Support Vector Machines (SVMs) Method:
+
+The support vector machine will use a kernal-based method for classification, assessing the research question through Recursive Feature Elimination and accuracy evaluation from model predictions. It will focus on finding the optimal decision boundary to maximize the margin between whether a player has won a match or not.
 
 ### Step 1: Convert factors to numeric for SVM
 ```{r}
@@ -586,6 +596,9 @@ accuracy_svm <- mean(svm_pred == Validation$Win)
 accuracy_svm
 ```
 
-Analysis:
+The accuracy found for the SVM method is 66.94%, while allowing better separation between decision boundaries like Win = Yes and Win = No from its nonlinear modeling.
 
-Both of the methods being used shows that "Deaths" was the most important factor for "Win". From the accuracy predictions of each model, we can see that SVM allows for a higher accuracy compared to the random forest model.
+
+## Analysis of Both Methods:
+
+Both of the methods being used shows that "Deaths" was the most important factor for "Win", from the seven other factors being tested. From the accuracy predictions of each model, we can see that SVM allows for a higher accuracy compared to the random forest model. This is due to the how overfitting is more present in the random forest model, due to the high amount of decision trees being used.

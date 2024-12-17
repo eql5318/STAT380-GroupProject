@@ -214,76 +214,105 @@ Based off this Visualization, it appears that the Map2 choice won outright more 
 
 ```{r}
 
-library(dplyr)
-library(ggplot2)
+# Change dataframe names to match GenAI Code
 
-# Step 1: Load the datasets
-p1_data <- CODGames_p1_380
-p2_data <- CODGames_p2_380
+maps <- CODMAPS
+p1 <- CODGames_p1_380
+p2 <- CODGames_p2_380
 
-# Step 2: Inspect data structure and summary
-str(p1_data)
-str(p2_data)
-
-# Step 3: Data cleaning
-# Remove rows with missing values in critical columns
-p1_cleaned <- p1_data %>% filter(!is.na(Map1), !is.na(Map2), !is.na(MapVote))
-p2_cleaned <- p2_data %>% filter(!is.na(Map1), !is.na(Map2), !is.na(MapVote))
-
-# Standardize map names by trimming whitespaces and converting to lowercase
-p1_cleaned <- p1_cleaned %>%
-  mutate(
-    Map1 = tolower(trimws(Map1)),
-    Map2 = tolower(trimws(Map2)),
-    Choice = tolower(trimws(Choice))
-  )
-
-p2_cleaned <- p2_cleaned %>%
-  mutate(
-    Map1 = tolower(trimws(Map1)),
-    Map2 = tolower(trimws(Map2)),
-    Choice = tolower(trimws(Choice))
-  )
-
-# Step 4: Combine datasets
-combined_data <- bind_rows(p1_cleaned, p2_cleaned)
+# Step 1: Standardize correct map names
+clean_maps <- maps %>%
+  mutate(Name_clean = tolower(str_trim(Name)))
 
 
-# Step 5: Calculate win probabilities with tie handling
 
-# Identify outright wins (exclude ties where Map1 was chosen by default)
-outright_wins <- combined_data %>%
-  filter(MapVote != "tie" | Choice != Map1) %>%
-  group_by(Choice) %>%
-  summarise(wins = n()) %>%
-  rename(map = Choice)
+# Step 2: Implement Levenshtein Distance Function
+levenshtein_distance <- function(str1, str2) {
+  if (is.na(str1) || is.na(str2) || str1 == "" || str2 == "") {
+    return(Inf)  # Return a large value if either string is NA or empty
+  }
+  len1 <- nchar(str1)
+  len2 <- nchar(str2)
+  str1 <- unlist(strsplit(str1, ""))
+  str2 <- unlist(strsplit(str2, ""))
+  
+  # Initialize matrix
+  dp <- matrix(0, nrow = len1 + 1, ncol = len2 + 1)
+  for (i in 1:(len1 + 1)) dp[i, 1] <- i - 1
+  for (j in 1:(len2 + 1)) dp[1, j] <- j - 1
+  
+  # Fill matrix
+  for (i in 2:(len1 + 1)) {
+    for (j in 2:(len2 + 1)) {
+      cost <- ifelse(str1[i - 1] == str2[j - 1], 0, 1)
+      dp[i, j] <- min(dp[i - 1, j] + 1,       # Deletion
+                      dp[i, j - 1] + 1,       # Insertion
+                      dp[i - 1, j - 1] + cost) # Substitution
+    }
+  }
+  return(dp[len1 + 1, len2 + 1])
+}
 
-# Count total appearances for each map (regardless of ties)
-appearances <- combined_data %>%
-  pivot_longer(cols = c(Map1, Map2), names_to = "position", values_to = "map") %>%
-  group_by(map) %>%
-  summarise(appearances = n())
 
-# Merge wins and appearances to calculate probabilities
-map_probabilities <- appearances %>%
-  left_join(outright_wins, by = "map") %>%
-  mutate(
-    wins = ifelse(is.na(wins), 0, wins),  # Handle maps with no outright wins
-    win_probability = wins / appearances
-  )
+# Step 3: Function to Find Closest Map Name
+find_closest_match <- function(input_name, correct_names) {
+  if (is.na(input_name) || input_name == "") return(NA)
+  input_name <- tolower(str_trim(input_name))
+  distances <- sapply(correct_names, function(x) levenshtein_distance(input_name, x))
+  return(correct_names[which.min(distances)])
+}
 
-# Step 6: Visualization (unchanged)
-map_probabilities <- map_probabilities %>%
-  arrange(desc(win_probability))
 
-ggplot(map_probabilities, aes(x = reorder(map, -win_probability), y = win_probability)) +
-  geom_bar(stat = "identity", fill = "steelblue") +
-  labs(
-    title = "Win Probability of Each Map (Excluding Default Wins)",
-    x = "Map Name",
-    y = "Win Probability"
-  ) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+p1 <- p1 %>%
+  mutate(Map1 = ifelse(!is.na(Map1) & Map1 != "", sapply(Map1, find_closest_match, correct_names), NA),
+         Map2 = ifelse(!is.na(Map2) & Map2 != "", sapply(Map2, find_closest_match, correct_names), NA),
+         Choice = ifelse(!is.na(Choice) & Choice != "", sapply(Choice, find_closest_match, correct_names), NA))
+
+p2 <- p2 %>%
+  mutate(Map1 = ifelse(!is.na(Map1) & Map1 != "", sapply(Map1, find_closest_match, correct_names), NA),
+         Map2 = ifelse(!is.na(Map2) & Map2 != "", sapply(Map2, find_closest_match, correct_names), NA),
+         Choice = ifelse(!is.na(Choice) & Choice != "", sapply(Choice, find_closest_match, correct_names), NA))
+
+# Step 4: Correct Map Names in the Dataset
+correct_names <- clean_maps$Name_clean
+
+p1 <- p1 %>%
+  mutate(Map1 = ifelse(!is.na(Map1), sapply(Map1, find_closest_match, correct_names), NA),
+         Map2 = ifelse(!is.na(Map2), sapply(Map2, find_closest_match, correct_names), NA),
+         Choice = ifelse(!is.na(Choice), sapply(Choice, find_closest_match, correct_names), NA))
+
+p2 <- p2 %>%
+  mutate(Map1 = ifelse(!is.na(Map1), sapply(Map1, find_closest_match, correct_names), NA),
+         Map2 = ifelse(!is.na(Map2), sapply(Map2, find_closest_match, correct_names), NA),
+         Choice = ifelse(!is.na(Choice), sapply(Choice, find_closest_match, correct_names), NA))
+
+# Step 5: Combine datasets for Player 1 and Player 2
+combined_data <- bind_rows(p1, p2)
+
+# Step 6: Identify map wins
+map_wins <- combined_data %>%
+  filter(!is.na(Map1) & !is.na(Map2)) %>%
+  mutate(Winner = case_when(
+    Choice == Map1 & Map1 != Map2 ~ Map1,  # Map1 wins outright
+    Choice == Map2 & Map1 != Map2 ~ Map2,  # Map2 wins outright
+    Map1 == Map2 ~ Map1                   # Handle tie when Map1 == Map2
+  )) %>%
+  filter(!is.na(Winner)) %>%
+  pivot_longer(cols = c(Map1, Map2), names_to = "MapType", values_to = "Map") %>%
+  group_by(Map) %>%
+  summarize(Total_Votes = n(),
+            Wins = sum(Winner == Map, na.rm = TRUE)) %>%
+  mutate(Win_Probability = Wins / Total_Votes) %>%
+  left_join(clean_maps, by = c("Map" = "Name_clean"))
+
+# Step 7: Visualization of results
+ggplot(map_wins, aes(x = reorder(Name, -Win_Probability), y = Win_Probability)) +
+  geom_bar(stat = "identity") +
+  coord_flip() +
+  labs(title = "Map Win Probabilities (Corrected Names)",
+       x = "Map",
+       y = "Probability of Winning") +
+  theme_minimal()
 
 ```
 
